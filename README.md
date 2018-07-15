@@ -1,2 +1,2 @@
-# base-js_project
+# base-js-project
 Javascript Development Environment
