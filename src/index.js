@@ -1,5 +1,34 @@
 import './index.css';
-import numeral from 'numeral';
+import { getUsers, deleteUsers } from './api/userApi';
 
-const courseValue = numeral(1000).format('$0,0.00');
-console.log(`I would pay ${courseValue} for this awesome course`);
+getUsers().then(result => {
+  let usersBody = '';
+
+  result.forEach(user => {
+    usersBody += `<tr>
+      <td><a href="#" data-id="${user.id}" class="deleteUser">Delete</a></td>
+      <td>${user.id}</td>
+      <td>${user.firstName}</td>
+      <td>${user.lastName}</td>
+      <td>${user.email}</td>
+    </tr>`;
+  });
+
+  // @ts-ignore
+  global.document.getElementById('users').innerHTML = usersBody;
+
+  // @ts-ignore
+  const deleteLinks = global.document.getElementsByClassName('deleteUser');
+
+  // Must use array.from to create a real array from a DOM collection
+  // getElementsByClassName only returns as "array like" object
+  Array.from(deleteLinks, link => {
+    link.onclick = function(event) {
+      const element = event.target;
+      event.preventDefault();
+      deleteUsers(element.attributes['data-id'].value);
+      const row = element.parentNode.parentNode;
+      row.parentNode.removeChild(row);
+    };
+  });
+});
